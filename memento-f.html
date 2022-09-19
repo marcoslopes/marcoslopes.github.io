@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Marcos Antonio Lopes</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@200;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/main.css">
+    <link href="data:image/x-icon;base64," rel="icon" type="image/x-icon" />
+</head>
+<body>
+    <div class="wrapper memento">
+
+        <h1 class="name">F Lopes</h1>
+
+        <div class="contact">
+            <p>marcos <span>[dot]</span> <a href="/memento-m.html">abil</a> <span>[at]</span> gmail <span>[dot]</span> com</p>
+            <p>Tauranga, NZ</p>
+
+            <div class="links">
+                <p><a href="/memento-m.html">Memento M</a></p>
+                <p><a href="/memento-b.html">Memento B</a></p>
+            </div>
+        </div>
+
+        <div class="content">
+            <h2>Memento Mori - Vicesima Secunda Novembris MMXXI</h2>
+        </div>
+    </div>
+</body>
+<script>
+    // https://stackoverflow.com/a/6117889
+    Date.prototype.getWeekNumber = function(){
+        var d = new Date(Date.UTC(this.getFullYear(), this.getMonth(), this.getDate()));
+        var dayNum = d.getUTCDay() || 7;
+        d.setUTCDate(d.getUTCDate() + 4 - dayNum);
+        var yearStart = new Date(Date.UTC(d.getUTCFullYear(),0,1));
+        return Math.ceil((((d - yearStart) / 86400000) + 1)/7)
+    };
+
+
+    const chunks = 10; // split into decades
+    const birth = new Date(2021, 10, 22); // month starts at 0 = jan, 4 = may
+    const now = new Date();
+    let content = document.querySelector(".content");
+
+    // create year's row
+    for(var i = 1; i <= 100; i++) {
+        let row = document.createElement('div');
+        row.classList.add('year');
+
+        // walk years and fill up past time
+        var year = new Date(birth.getTime());
+        year.setFullYear(year.getFullYear() + (i - 1));
+        if (year.getFullYear() < now.getFullYear()) {
+            row.classList.add('year--filled');
+        }
+
+        // create week's column
+        for (var j = 0; j < 52; j++) {
+            let week = document.createElement('span');
+            week.classList.add('week');
+
+            // walk current year's weeks and fill up past time
+            if (year.getFullYear() == now.getFullYear()) {
+                if (j + 1 < now.getWeekNumber()) {
+                    week.classList.add('week--filled');
+                } else if (j + 1 == now.getWeekNumber()) {
+                    week.classList.add('week--current');
+                }
+            }
+
+            row.appendChild(week);
+        }
+
+        // add everything to the body
+        content.appendChild(row);
+
+        // add roman labels
+        if (i % chunks == 0 && i !== 0) {
+            let label = document.createElement('div');
+            label.classList.add('chunk--label');
+            content.appendChild(label);
+        }
+    }
+</script>
+</html>

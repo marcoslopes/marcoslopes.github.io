@@ -68,6 +68,9 @@ body {
     font-weight: 500;
     font-size: 1em;
 }
+a {
+    color: rgba(51, 51, 51, 0.8);
+}
 
 .name {
     font-weight: 200;
@@ -93,11 +96,13 @@ p {
     margin-top: 10px;
 }
 
-.contact {
+.contact, links {
     margin: 10px 0;
 }
 
-.contact p > span {
+.contact p > span,
+.links p > span
+{
     font-weight: bolder;
 }
 
@@ -165,6 +170,53 @@ a {
     color: rgba(20, 56, 92, 1);
 }
 
+/* memento.html to be moved out */
+.memento {
+    counter-reset: year;
+    /* counter-increment: year 10 */;
+}
+
+.week {
+    display: inline-block;
+    margin: 0 2px;
+    width: 7.8px;
+    height: 7.8px;
+    border: rgba(51, 51, 51, 0.8) 1px solid;
+}
+
+.week.week--filled {
+    background-color: rgba(51, 51, 51, 0.8);
+}
+
+.week.week--current {
+    background-color: rgba(188, 155, 27, 1);
+    border: rgba(188, 155, 27, 1) 1px solid;
+}
+
+.year {
+    display: grid;
+    grid-template-columns: repeat(52, 1fr);
+    padding: 2px;
+    counter-increment: year;
+}
+
+.chunk--label {
+    margin: 3px 5px 15px 0;
+    text-align: right;
+}
+.chunk--label::before {
+    content: counter(year, upper-roman);
+    white-space: pre;
+    margin-top: 15px;
+}
+
+.year--filled .week {
+    display: inline-block;
+    margin: 0 2px;
+    width: 7.8px;
+    height: 7.8px;
+    background-color: rgba(51, 51, 51, 0.8);
+}
 
 
 
@@ -201,3 +253,5 @@ a {
     }
 
 }
+
+
