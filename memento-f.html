@@ -31,55 +31,64 @@
     </div>
 </body>
 <script>
+    // bring everything to the smallest unit, from years to weeks
+    // the definition of week is 7 lived days so the in this case
+    // 1 week will only be counted at the end of 7 days
+    // there are still some issues, on the first year of living,
+    // but i am not planning on having more kids, so this will do
+
     // https://stackoverflow.com/a/6117889
     Date.prototype.getWeekNumber = function(){
         var d = new Date(Date.UTC(this.getFullYear(), this.getMonth(), this.getDate()));
         var dayNum = d.getUTCDay() || 7;
         d.setUTCDate(d.getUTCDate() + 4 - dayNum);
         var yearStart = new Date(Date.UTC(d.getUTCFullYear(),0,1));
-        return Math.ceil((((d - yearStart) / 86400000) + 1)/7)
+        return Math.floor((((d - yearStart) / 86400000) + 1)/7)
     };
 
-
-    const chunks = 10; // split into decades
-    const birth = new Date(2021, 10, 22); // month starts at 0 = jan, 4 = may
     const now = new Date();
+    const birth = new Date(2021, 10, 22); // month starts at 0 = jan, 4 = may
+    const weeks = 100 * 52; // 100 years
+
+    const chunks = 10 * 52; // split into decades
     let content = document.querySelector(".content");
 
-    // create year's row
-    for(var i = 1; i <= 100; i++) {
-        let row = document.createElement('div');
-        row.classList.add('year');
+    for(var i = 0; i < weeks; i++) {
+        let year = parseInt(i / 52);
 
-        // walk years and fill up past time
-        var year = new Date(birth.getTime());
-        year.setFullYear(year.getFullYear() + (i - 1));
-        if (year.getFullYear() < now.getFullYear()) {
-            row.classList.add('year--filled');
+        var row = null;
+        if (i % 52 == 0) {
+            row = document.createElement('div');
+            row.setAttribute("id", `year-${year}`);
+            row.classList.add('year');
+            content.appendChild(row);
+        } else {
+            row = document.querySelector(`#year-${year}`);
         }
 
-        // create week's column
-        for (var j = 0; j < 52; j++) {
-            let week = document.createElement('span');
-            week.classList.add('week');
+        let item = document.createElement('span');
+        item.classList.add('week');
 
-            // walk current year's weeks and fill up past time
-            if (year.getFullYear() == now.getFullYear()) {
-                if (j + 1 < now.getWeekNumber()) {
-                    week.classList.add('week--filled');
-                } else if (j + 1 == now.getWeekNumber()) {
-                    week.classList.add('week--current');
-                }
+        var week = new Date(birth.getTime());
+        week.setDate(week.getDate() + (i * 7));
+
+        // if past years, just fill the whole row otherwise deal with weeks
+        if (week.getFullYear() < now.getFullYear()) {
+            if (week < now) {
+                item.classList.add('week--filled');
             }
-
-            row.appendChild(week);
+        } else if (week.getFullYear() == now.getFullYear()) {
+            if (week.getWeekNumber() + 1 < now.getWeekNumber()) { // offset so week is counted at the end
+                item.classList.add('week--filled');
+            } else if (week.getWeekNumber() + 1 == now.getWeekNumber()) {
+                item.classList.add('week--current');
+            }
         }
 
-        // add everything to the body
-        content.appendChild(row);
+        row.appendChild(item);
 
         // add roman labels
-        if (i % chunks == 0 && i !== 0) {
+        if ((i + 1) % chunks == 0 && i !== 0) {
             let label = document.createElement('div');
             label.classList.add('chunk--label');
             content.appendChild(label);
